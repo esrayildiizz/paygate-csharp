@@ -1,0 +1,11 @@
+:host ::ng-deep .p-dialog .product-image {
+  width: 150px;
+  margin: 0 auto 2rem auto;
+  display: block;
+}
+/* Özel stil sınıfı "custom-label" */
+.custom-label {
+  margin-left: 10px; /* Sol taraftan boşluk bırakma */
+  margin-right: 5px;
+  font-weight: bold; /* Kalın yazı tipi */
+}

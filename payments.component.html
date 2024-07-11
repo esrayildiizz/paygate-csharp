@@ -1,0 +1,197 @@
+<div class="grid">
+  <div class="col-12">
+    <div class="card px-6 py-6">
+      <p-toast></p-toast>
+      <p-toolbar styleClass="mb-4">
+        <ng-template pTemplate="left">
+          <div class="d-flex">
+            <label class="custom-label mt-1">{{l('CastleService::StartDate')}} :</label>
+            <p-calendar [(ngModel)]="startDate" (onSelect)="dateShow($event)" [showTime]="true" [showSeconds]="true"></p-calendar>
+
+            <label class="custom-label mt-1">{{l('CastleService::EndDate')}} :</label>
+            <p-calendar [(ngModel)]="endDate" [showTime]="true" (onSelect)="dateShow($event)" [showSeconds]="true"></p-calendar>
+
+          </div>
+          <label class="custom-label">{{l('CastleService::Terminal')}} :</label>
+          <p-dropdown [options]="terminals"  [(ngModel)]="selectedTerminal" optionLabel="name"></p-dropdown>
+          <label class="custom-label"> {{l('CastleService::TransactionStatus')}} :</label>
+          <p-dropdown [options]="paymentStatuses" [(ngModel)]="selectedStatus" optionLabel="label" optionValue="value" ></p-dropdown>
+          <p-button class="mx-3" (click)="responseData()" label="{{l('CastleService::Show')}}" styleClass="p-button-rounded p-button-secondary"></p-button>
+        </ng-template>
+      </p-toolbar>
+
+
+
+      <p-table #dt
+               [value]="payments"
+               [columns]="selectedColumns"
+               responsiveLayout="scroll"
+               [rows]="10"
+               [globalFilterFields]="['id','trandate' , 'amount' , 'paidamount' , 'installment' , 'rrn' , 'paymentsource' , 'paymentstatus' , 'paymentprovider' , 'merchantcommissionrate' , 'merchantcommissionrateamount' , 'bankcommissionrate' , 'bankcommissionrateamount' , 'cardnumber' , 'cardtype' , 'cardassociation' , 'cardbrand' , 'refundableAmount' , 'refundStatus' , 'terminalid' , 'errorcode' , 'errorDescription','retryCount','refundStatusText','mdStatus','errorCode','buyerMember' ,'refunds']"
+               [paginator]="true"
+               [rowsPerPageOptions]="[10,20,30]"
+               [showCurrentPageReport]="true"
+               currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+               selectionMode="multiple"
+               [rowHover]="true"
+               dataKey="id"
+               [resizableColumns]="true">
+        <ng-template pTemplate="caption">
+          <div class="form-group m-form_group row">
+            <div class="col-2 input-group-sm">
+              <div class="p-inputgroup">
+                <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                       placeholder="{{l('CastleService::Search')}}" />
+                <button type="button" pButton icon="pi pi-search" class="p-button-info" ></button>
+              </div>
+            </div>
+            <div class="col-3 input-group-sm">
+              <p-multiSelect [options]="cols" [(ngModel)]="selectedColumns" optionLabel="header"
+                             selectedItemsLabel="{ 0 } {{l('CastleService::a')}}" [style]="{'min-width': '200px'}"
+                             placeholder="{{l('CastleService::ChooseColumns')}}"></p-multiSelect>
+            </div>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th></th>
+            <th pSortableColumn="trandate">
+              <div class="flex justify-content-between align-items-center">
+                {{l('CastleService::TranDate')}}
+                <p-sortIcon field="trandate"></p-sortIcon>
+                <p-columnFilter type="text" field="trandate" display="menu" class="ml-auto"></p-columnFilter>
+              </div>
+            </th>
+            <th pSortableColumn="paymentType">
+              <div class="flex justify-content-between align-items-center">
+                {{l('CastleService::PaymentType')}}
+                <p-sortIcon field="paymentType"></p-sortIcon>
+                <p-columnFilter type="text" field="paymentType" display="menu" class="ml-auto"></p-columnFilter>
+              </div>
+            </th>
+            <th pSortableColumn="paymentStatus">
+              <div class="flex justify-content-between align-items-center">
+                {{l('CastleService::PaymentStatus')}}
+                <p-sortIcon field="paymentStatus"></p-sortIcon>
+                <p-columnFilter type="text" field="paymentStatus" display="menu" class="ml-auto"></p-columnFilter>
+              </div>
+            </th>
+
+            <th pSortableColumn="amount">
+              <div class="flex justify-content-between align-items-center">
+                {{l('CastleService::Amount')}}
+                <p-sortIcon field="amount"></p-sortIcon>
+                <p-columnFilter type="text" field="amount" display="menu" class="ml-auto"></p-columnFilter>
+              </div>
+            </th>
+
+            <th pSortableColumn="refundStatus">
+              <div class="flex justify-content-between align-items-center">
+                {{l('CastleService::RefundStatus')}}
+                <p-sortIcon field="refundStatus"></p-sortIcon>
+                <p-columnFilter type="text" field="refundStatus" display="menu" class="ml-auto"></p-columnFilter>
+              </div>
+            </th>
+
+            <th pResizableColumn pSortableColumn="{{col.header}}" *ngFor="let col of columns">
+              <div class="flex justify-content-between align-items-center">
+                {{ col.header }}
+                <p-sortIcon field="{{col.header}}"></p-sortIcon>
+                <p-columnFilter type="text" field="{{col.header}}" display="menu" class="ml-auto"></p-columnFilter>
+              </div>
+            </th>
+
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-transaction let-columns="columns">
+          <tr>
+            <td>
+              <p-checkbox *ngIf="!transaction.refunds" (onChange)="selectRow()" [(ngModel)]="selectedTransaction" name="group" [value]="transaction"></p-checkbox>
+            </td>
+
+            <td style="width:14%;">
+              <span class="p-column-title">{{l('CastleService::TranDate')}}</span>
+              {{transaction.tranDate | momentFormat:'L LTS'}}
+            </td>
+
+            <td style="width:14%">
+              <span class="p-column-title">{{l('CastleService::PaymentType')}}</span>
+              {{transaction.paymentTypeText}}
+            </td>
+
+            <td style="width:14%">
+              <span class="p-column-title">{{l('CastleService::PaymentStatus')}}</span>
+              <div *ngIf="transaction.paymentStatusText === 'SUCCESS'"> <p-tag [severity]="getSeverity('1')">{{l('CastleService::Successful')}}</p-tag></div>
+              <div *ngIf="transaction.paymentStatusText === 'FAILURE'"> <p-tag [severity]="getSeverity('0')">{{l('CastleService::Failure')}}</p-tag></div>
+            </td>
+
+            <td style="width:14%;">
+              <span class="p-column-title">{{l('CastleService::Amount')}}</span>
+              {{transaction.amount}}
+            </td>
+
+            <td style="width:14%">
+              <span class="p-column-title">{{l('CastleService::RefundStatus')}}</span>
+              <div *ngIf="transaction.refundStatusText === 'SUCCESS'"> <p-tag [severity]="getSeverity('1')">{{l('CastleService::Successful')}}</p-tag></div>
+              <div *ngIf="transaction.refundStatusText === 'FAILURE'"> <p-tag [severity]="getSeverity('0')">{{l('CastleService::Failure')}}</p-tag></div>
+              <div *ngIf="transaction.refundStatusText === 'NONE'"> <p-tag [severity]="getSeverity('2')">{{l('CastleService::None')}}</p-tag></div>
+            </td>
+
+            <td style="width:14%" *ngFor="let col of columns">
+              {{transaction[col.field]}}
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <div class="my-2">
+        <p-button (click)="selectTransactionButton(selectedTransaction,'cancel')" label="{{l('CastleService::Cancel')}}" styleClass="p-button-rounded p-button-danger" [disabled]="selectedTransaction[0] == undefined|| selectedTransaction.length === 0"></p-button>
+        <p-button class="mx-1" (click)="selectTransactionButton(selectedTransaction,'refund')" label="{{l('CastleService::Refund')}}" styleClass="p-button-rounded p-button-warning" [disabled]="selectedTransaction[0] == undefined|| selectedTransaction.length === 0"></p-button>
+        <p-button class="mx-1" (click)="selectTransactionButton(selectedTransaction,'provision')" label="{{l('CastleService::CloseProvison')}}" styleClass="p-button-rounded" [disabled]="selectedTransaction[0] == undefined || selectedTransaction.length === 0"></p-button>
+      </div>
+      <!--İptal Butonu-->
+      <p-dialog [(visible)]="cancelDialog" header="{{l('CastleService::Confirm')}}" [modal]="true" [style]="{width:'450px'}">
+        <div class="flex align-items-center justify-content-center">
+          <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+          <span *ngIf="terminals">{{l('CastleService::TransactionQues')}}</span>
+        </div>
+        <ng-template pTemplate="footer">
+          <button pButton pRipple icon="pi pi-times" class="p-button-danger mr-2" (click)="cancelDialog = false">{{l('CastleService::No')}}</button>
+          <button pButton pRipple icon="pi pi-check" class="p-button-success mr-2" (click)="cancel()">{{l('CastleService::Yes')}}</button>
+        </ng-template>
+      </p-dialog>
+
+      <!--İade Butonu-->
+      <p-dialog [(visible)]="refundDialog" header="{{l('CastleService::Confirm')}}" [modal]="true" [style]="{width:'450px'}">
+        <div class="flex align-items-center justify-content-center">
+          <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+          <span *ngIf="terminals">{{l('CastleService::TransactionQues1')}}</span>
+        </div>
+        <ng-template pTemplate="footer">
+          <button pButton pRipple icon="pi pi-times" class="p-button-danger mr-2" (click)="refundDialog = false">{{l('CastleService::No')}}</button>
+          <button pButton pRipple icon="pi pi-check" class="p-button-success mr-2" (click)="refund()">{{l('CastleService::Yes')}}</button>
+        </ng-template>
+      </p-dialog>
+
+      <!--Provizyon Kapama Butonu-->
+      <p-dialog [(visible)]="provisionDialog" header="{{l('CastleService::Confirm')}}" [modal]="true" [style]="{width:'450px'}">
+        <div class="flex align-items-center justify-content-center">
+          <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+          <span *ngIf="terminals">{{l('CastleService::TransactionQues2')}}</span>
+        </div>
+        <ng-template pTemplate="footer">
+          <button pButton pRipple icon="pi pi-times" class="p-button-danger mr-2" (click)="provisionDialog = false">{{l('CastleService::No')}}</button>
+          <button pButton pRipple icon="pi pi-check" class="p-button-success mr-2" (click)="provision()">{{l('CastleService::Yes')}}</button>
+        </ng-template>
+      </p-dialog>
+
+
+      <p-dialog [(visible)]="successDialog" [modal]="true" [style]="{width:'450px'}">
+        <p>İşleminiz başarıyla gerçekleştirilmiştir</p>
+      </p-dialog>
+      <p-dialog [(visible)]="failDialog" [modal]="true" [style]="{width:'450px'}">
+        <p>İşlemin sırasında bir hata oluştu. Tekrar deneyiniz.</p>
+      </p-dialog>
+    </div>
+  </div>
+</div>
+
