@@ -1,14 +1,71 @@
-# Example
 
-## My Project
 
-### Tanıtım
+  
+<p align="center">
+  <img src="https://github.com/esrayildiizz/Example/assets/106755194/e0197438-b265-449a-a90b-cf4f526a0e01" alt="PAYGATE Image"/>
+</p>
 
-### Kurulum
+<p align="center">
+<strong>PAYGATE</strong>
+</p>
+
+<p align="center">
+PayGate ile tüm online ödemelerinizi tek merkezden yönetin 
+</p>
+<p align="center">
+katma değerli servislerimiz ile ödeme giderlerinizi azaltın, cironuzu artırın ve işletmenizi büyütün.
+</p>
+
+## PAYGATE
+*PayGate ile tüm online ödemelerinizi tek merkezden yönetin ,katma değerli servislerimiz ile ödeme giderlerinizi azaltın, cironuzu artırın ve işletmenizi büyütün.*
+
+## Table of contents
+- [Quick start](#quick-start)
+- [Status](#status)
+- [What's included](#whats-included)
+- [Bugs and feature requests](#bugs-and-feature-requests)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
+- [Community](#community)
+- [Versioning](#versioning)
+- [Creators](#creators)
+- [Thanks](#thanks)
+- [Copyright and license](#copyright-and-license)
+
+
+## Quick start
 
 [GitHub](https://github.com/Payment-Gateway-Team/PaymentGateway.git)
 
-[Banka Finans Kodları](https://www.mevzuat.net/fayda/BankaFinansKodlari.aspx)
+## Status
+
+## What's included
+
+## Bugs and feature requests
+
+## Documentation
+
+## Contributing
+
+## Community
+
+## Versioning
+
+
+## Creators
+
+
+## Thanks
+
+## Sponsors
+
+## Backers
+
+
+## Copyright and license
+
+
+
 
 ### Örnek Kodlar
 *C#*
